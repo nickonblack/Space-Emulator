@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		81409FC121FCA7D4009921EE /* spaceMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 81409FC021FCA7D4009921EE /* spaceMusic.mp3 */; };
 		814DE39921D94BEF00FDB749 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814DE39821D94BEF00FDB749 /* AppDelegate.swift */; };
 		814DE39B21D94BEF00FDB749 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 814DE39A21D94BEF00FDB749 /* art.scnassets */; };
 		814DE39D21D94BEF00FDB749 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 814DE39C21D94BEF00FDB749 /* GameViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		81409FC021FCA7D4009921EE /* spaceMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = spaceMusic.mp3; sourceTree = "<group>"; };
 		814DE39521D94BEF00FDB749 /* Space Emulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Space Emulator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		814DE39821D94BEF00FDB749 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		814DE39A21D94BEF00FDB749 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				814DE39821D94BEF00FDB749 /* AppDelegate.swift */,
+				81409FC021FCA7D4009921EE /* spaceMusic.mp3 */,
 				814DE39A21D94BEF00FDB749 /* art.scnassets */,
 				814DE39C21D94BEF00FDB749 /* GameViewController.swift */,
 				814DE39E21D94BEF00FDB749 /* Main.storyboard */,
@@ -129,6 +132,7 @@
 				814DE3A521D94BF100FDB749 /* LaunchScreen.storyboard in Resources */,
 				814DE3A221D94BF100FDB749 /* Assets.xcassets in Resources */,
 				814DE3A021D94BEF00FDB749 /* Main.storyboard in Resources */,
+				81409FC121FCA7D4009921EE /* spaceMusic.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +293,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7L74RJGVS4;
 				INFOPLIST_FILE = "Space Emulator/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -307,6 +312,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7L74RJGVS4;
 				INFOPLIST_FILE = "Space Emulator/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

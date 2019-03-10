@@ -25,7 +25,7 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
     var planetMass:Float = 4.0
     var planetVector = SCNVector3(0, 1.8, 0)
     var planetPos:SCNVector3?
-    
+    var lines : [SCNNode] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,21 +35,11 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         createPlanet()
         setupCamera()
         playSound()
-       
-//        print(distance(first: sun, second: planet))
         setupLight()
+        createLine()
         
         
-        
-//        let s = SCNNode(geometry: SCNGeometry.lineFrom(vector: SCNVector3Make(0, 0, 0), toVector: SCNVector3Make(30, 5, 4)))
-//        s.scale = SCNVector3Make(2, 2, 1)
-//         let line = SCNCylinder(radius: 0.002, height: node1.distance(to: node2))
-//
-//        let newLine = SCNNode()
-//        newLine.geometry = line
-//        newLine.position = posBetween(first: node1, second: node2)
-        
-//          scnScene.rootNode.addChildNode(s)
+
     }
     
     
@@ -69,9 +59,6 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
     
     func setupView()
     {
-//        scnView.backgroundColor = UIColor.clear
-//        scnView.backgroundColor = UIColor.black
-        
         scnView.delegate = self
     }
     
@@ -79,8 +66,6 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
     {
         self.scnView.scene = scnScene
         scnScene.background.contents = UIImage(named:"art.scnassets/img_skybox.jpg")
-//        scnScene.background.contents = UIImage(named:"background.jpg")
-//        scnScene.lightingEnvironment.contents = UIImage(named:"background.jpg")
         scnView.allowsCameraControl = true
         scnView.showsStatistics = true
     }
@@ -111,7 +96,6 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         let ballMaterial = SCNMaterial()
         ballMaterial.diffuse.contents = UIImage(named:"art.scnassets/sun.jpg")
         ballMaterial.emission.contents = UIImage(named:"art.scnassets/sun.jpg")
-//        ballMaterial.
         ballMaterial.emission.intensity = 1
         ballGeometry.materials = [ballMaterial]
         
@@ -130,6 +114,42 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         ballGeometry.materials = [ballMaterial]
         planet.position = SCNVector3Make(60, 0 , 0 )
         scnScene.rootNode.addChildNode(planet)
+    }
+    
+    func createLine()
+    {
+        ///
+        let cyanMaterial = SCNMaterial()
+        cyanMaterial.diffuse.contents = UIColor.cyan
+        
+        let anOrangeMaterial = SCNMaterial()
+        anOrangeMaterial.diffuse.contents = UIColor.orange
+        
+        let aPurpleMaterial = SCNMaterial()
+        aPurpleMaterial.diffuse.contents = UIColor.purple
+        
+        // A bezier path
+        let bezierPath = UIBezierPath()
+        bezierPath.move(to: CGPoint(x: -0.5, y: 0))
+        bezierPath.addLine(to: CGPoint(x: 0, y: -0.25))
+        bezierPath.addLine(to: CGPoint(x: 0.10, y: 0))
+        bezierPath.addLine(to: CGPoint(x: 0, y: 0.15))
+        bezierPath.close()
+        
+        // Add shape
+//        let shape = SCNShape(path: bezierPath, extrusionDepth: 0.75)
+//        shape.materials = [cyanMaterial, anOrangeMaterial, aPurpleMaterial]
+//        let shapeNode = SCNNode(geometry: shape)
+//        shapeNode.position = SCNVector3(x: 60, y: 0, z: 0);
+//        //        self.rootNode.addChildNode(shapeNode)
+//        shapeNode.rotation = SCNVector4(x: -1.0, y: -1.0, z: 0.0, w: 0.0)
+//        scnScene.rootNode.addChildNode(shapeNode)
+        //
+//        bezierPath.move(to: CGPoint(x: -5, y: 0))
+//        bezierPath.addLine(to: CGPoint(x: 0, y: -5))
+//        bezierPath.addLine(to: CGPoint(x: 5, y: 0))
+//        bezierPath.addLine(to: CGPoint(x: 0, y: 5))
+//        bezierPath.close()
     }
     
     func distance(first :SCNNode, second :SCNNode)-> Float
@@ -155,7 +175,8 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         sun.light?.color = UIColor.white
     }
     
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+    func planetMove()
+    {
         
         print("PositionX:",planet.position.x)
         print("PositionY:",planet.position.y)
@@ -168,19 +189,35 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         planetVector = SCNVector3(planetVector.x+finalVector.x, planetVector.y+finalVector.y, planetVector.z+finalVector.z)
         print(planetVector)
         
+        
         if planetPos == nil
         {
             planetPos = planet.position
         }
         
-//        let line = SCNNode(geometry: SCNGeometry.lineFrom(vector: planetPos!, toVector: planet.position))
-//        scnScene.rootNode.addChildNode(line)
-        
-        
         planetPos  = planet.position
         
         planet.runAction(SCNAction.moveBy(x: CGFloat(planetVector.x), y: CGFloat(planetVector.y), z: CGFloat(planetVector.z), duration: 0.1))
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         
+        planetMove()
+        
+        
+        let line = SCNNode(geometry: SCNGeometry.lineFrom(vector: planetPos!, toVector: planet.position))
+        lines.append(line)
+        scnScene.rootNode.addChildNode(line)
+        
+    
+        if lines.count > 500
+        {
+            lines.first?.removeFromParentNode()
+            lines.remove(at: 0)
+        }
+    
+        
+
         
     }
     
@@ -200,7 +237,6 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
             
             guard let player = player else { return }
             player.delegate = self
-//            player.play()
             
         } catch let error {
             print(error.localizedDescription)
@@ -212,10 +248,7 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
     }
     
     
-    func createLine()
-    {
-//        let s = SCNGeometryElement
-    }
+    
     
     
     
@@ -229,8 +262,6 @@ extension SCNGeometry {
         
         let source = SCNGeometrySource(vertices: [vector1, vector2])
         let element = SCNGeometryElement(indices: indices, primitiveType: .line)
-//        element.pointSize = 15
-//        element.maximumPointScreenSpaceRadius = 10
         
         return SCNGeometry(sources: [source], elements: [element])
         

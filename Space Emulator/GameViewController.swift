@@ -14,7 +14,7 @@ import AVFoundation
 class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlayerDelegate {
     
     
-    var planetsData : [(type: planetType, mass : Double, radius: Double, vector : SCNVector3)] = []
+    
     var player: AVAudioPlayer?
     
     
@@ -29,6 +29,9 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
 
     var planetPos:SCNVector3?
     var lines : [SCNNode] = []
+    
+    var planetsData : [(type: planetType, mass : Double, radius: Double, vector : SCNVector3)] = []
+    var planets : [SCNNode] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,7 +68,23 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
     
     func createPlanets()
     {
-        
+        for planet in planetsData
+        {
+            let ballGeometry = SCNSphere(radius: CGFloat(planet.radius))
+            ballGeometry.segmentCount = 50
+            
+//            let ballGeometry = SCNSphere(radius: 27)
+//            ballGeometry.segmentCount = 100
+//            sun = SCNNode(geometry: ballGeometry)
+//            let ballMaterial = SCNMaterial()
+//            ballMaterial.diffuse.contents = UIImage(named:"art.scnassets/sun.jpg")
+//            ballMaterial.emission.contents = UIImage(named:"art.scnassets/sun.jpg")
+//            ballMaterial.emission.intensity = 1
+//            ballGeometry.materials = [ballMaterial]
+//
+//            sun.runAction(SCNAction.repeatForever(SCNAction.rotate(by: CGFloat(2 * Double.pi), around: SCNVector3(0.2,1,0), duration: 20)))
+            
+        }
     }
     
     func setupView()

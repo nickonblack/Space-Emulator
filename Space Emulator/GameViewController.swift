@@ -12,7 +12,9 @@ import SceneKit
 import AVFoundation
 
 class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlayerDelegate {
-
+    
+    
+    var planetsData : [(type: planetType, mass : Double, radius: Double, vector : SCNVector3)] = []
     var player: AVAudioPlayer?
     
     
@@ -24,11 +26,14 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
     var sunMass:Float = 15.5
     var planetMass:Float = 4.0
     var planetVector = SCNVector3(0, 1.8, 0)
+
     var planetPos:SCNVector3?
     var lines : [SCNNode] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
         setupView()
         setupScene()
         createSun()
@@ -37,7 +42,6 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         playSound()
         setupLight()
         createLine()
-        
         
 
     }
@@ -55,6 +59,13 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
     
     override var prefersStatusBarHidden: Bool {
         return true
+    }
+    
+    
+    
+    func createPlanets()
+    {
+        
     }
     
     func setupView()
@@ -200,9 +211,36 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         planet.runAction(SCNAction.moveBy(x: CGFloat(planetVector.x), y: CGFloat(planetVector.y), z: CGFloat(planetVector.z), duration: 0.1))
     }
     
+    
+    func sunMove()
+    {
+        print("PositionX:",planet.position.x)
+        print("PositionY:",planet.position.y)
+        print("PositionZ:",planet.position.z)
+        let vectorToSun = SCNVector3(-(sun.position.x - planet.position.x) , -(sun.position.y - planet.position.y), -(sun.position.z - planet.position.z))
+        let distToSun = distance(first: sun, second: planet)
+        let vectorToSunNormalized = SCNVector3(vectorToSun.x/distToSun, vectorToSun.y/distToSun, vectorToSun.z/distToSun)
+        let a = 11 * planetMass / distToSun / distToSun
+        let finalVector = SCNVector3(a*vectorToSunNormalized.x, a*vectorToSunNormalized.y, a*vectorToSunNormalized.z)
+        planetVector = SCNVector3(planetVector.x+finalVector.x, planetVector.y+finalVector.y, planetVector.z+finalVector.z)
+        print(planetVector)
+        
+        
+        if planetPos == nil
+        {
+            planetPos = planet.position
+        }
+        
+        planetPos  = planet.position
+        
+        planet.runAction(SCNAction.moveBy(x: CGFloat(planetVector.x), y: CGFloat(planetVector.y), z: CGFloat(planetVector.z), duration: 0.1))
+    }
+    
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         
         planetMove()
+        sunMove()
+        
         
         
         let line = SCNNode(geometry: SCNGeometry.lineFrom(vector: planetPos!, toVector: planet.position))
@@ -247,6 +285,9 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         player.play()
     }
     
+    @IBAction func backBtnTouched(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+    }
     
     
     
@@ -267,108 +308,22 @@ extension SCNGeometry {
         
     }
 }
-//
-//        // create a new scene
-//        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-//
-//        // create and add a camera to the scene
-//        let cameraNode = SCNNode()
-//        cameraNode.camera = SCNCamera()
-//        scene.rootNode.addChildNode(cameraNode)
-//
-//        // place the camera
-//        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
-//
-//        // create and add a light to the scene
-//        let lightNode = SCNNode()
-//        lightNode.light = SCNLight()
-//        lightNode.light!.type = .omni
-//        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
-//        scene.rootNode.addChildNode(lightNode)
-//
-//        // create and add an ambient light to the scene
-//        let ambientLightNode = SCNNode()
-//        ambientLightNode.light = SCNLight()
-//        ambientLightNode.light!.type = .ambient
-//        ambientLightNode.light!.color = UIColor.darkGray
-//        scene.rootNode.addChildNode(ambientLightNode)
-//
-//        // retrieve the ship node
-//        let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
-//
-//        // animate the 3d object
-//        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
-//
-//        // retrieve the SCNView
-//        let scnView = self.view as! SCNView
-//
-//        // set the scene to the view
-//        scnView.scene = scene
-//
-//        // allows the user to manipulate the camera
-//        scnView.allowsCameraControl = true
-//
-//        // show statistics such as fps and timing information
-//        scnView.showsStatistics = true
-//
-//        // configure the view
-//        scnView.backgroundColor = UIColor.black
-//
-//        // add a tap gesture recognizer
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-//        scnView.addGestureRecognizer(tapGesture)
-//    }
-//
-//    @objc
-//    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-//        // retrieve the SCNView
-//        let scnView = self.view as! SCNView
-//
-//        // check what nodes are tapped
-//        let p = gestureRecognize.location(in: scnView)
-//        let hitResults = scnView.hitTest(p, options: [:])
-//        // check that we clicked on at least one object
-//        if hitResults.count > 0 {
-//            // retrieved the first clicked object
-//            let result = hitResults[0]
-//
-//            // get its material
-//            let material = result.node.geometry!.firstMaterial!
-//
-//            // highlight it
-//            SCNTransaction.begin()
-//            SCNTransaction.animationDuration = 0.5
-//
-//            // on completion - unhighlight
-//            SCNTransaction.completionBlock = {
-//                SCNTransaction.begin()
-//                SCNTransaction.animationDuration = 0.5
-//
-//                material.emission.contents = UIColor.black
-//
-//                SCNTransaction.commit()
-//            }
-//
-//            material.emission.contents = UIColor.red
-//
-//            SCNTransaction.commit()
-//        }
-//    }
-//
-//    override var shouldAutorotate: Bool {
-//        return true
-//    }
-//
-//    override var prefersStatusBarHidden: Bool {
-//        return true
-//    }
-//
-//    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-//        if UIDevice.current.userInterfaceIdiom == .phone {
-//            return .allButUpsideDown
-//        } else {
-//            return .all
-//        }
-//    }
-//
-//}
+
+enum planetType
+{
+    case sun
+    case earth
+    case planet
+    
+    func simpleDescription() -> String {
+        switch self {
+        case .sun:
+            return "sun"
+        case .earth:
+            return "earth"
+        case .planet:
+            return "planet"
+        }
+    }
+    
+}

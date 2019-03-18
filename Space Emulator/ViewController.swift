@@ -51,6 +51,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     @IBAction func startButtonTouched(_ sender: Any) {
+        if count != 0
+        {
         if let gameController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "GameController") as? GameViewController{
            
             for i in 0...count-1
@@ -65,13 +67,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     let z = (cell.zVectorTextField.text! as NSString).doubleValue
                     let vector = SCNVector3(x, y, z)
                     
-                    gameController.planetsData.append((type: type , mass: mass, radius: radius, vector: vector))
+                    let xPos = (cell.xStartTextField.text! as NSString).doubleValue
+                    let yPos = (cell.yStartTextField.text! as NSString).doubleValue
+                    let zPos = (cell.zStartTextField.text! as NSString).doubleValue
+                    let vectorPos = SCNVector3(xPos, yPos, zPos)
+                    
+                    gameController.planetsData.append((type: type , mass: mass, radius: radius, vector: vector, position: vectorPos))
                 }
             }
             self.navigationController?.pushViewController(gameController, animated: true)
         }
     }
-
+    }
 }
 
 

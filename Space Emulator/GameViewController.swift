@@ -21,17 +21,10 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
     @IBOutlet weak var scnView: SCNView!
     var scnScene = SCNScene()
     let cameraNode = SCNNode()
-//    var sun: SCNNode!
-//    var planet: SCNNode!
-//    var sunMass:Float = 15.5
-//    var planetMass:Float = 4.0
-//    var planetVector = SCNVector3(0, 1.8, 0)
-
-//    var planetPos:SCNVector3?
     
     var lines : [SCNNode] = []
     
-    var planetsData : [(type: planetType, mass : Double, radius: Double, vector : SCNVector3)] = []
+    var planetsData : [(type: planetType, mass : Double, radius: Double, vector : SCNVector3, position: SCNVector3 )] = []
     var planets : [SCNNode] = []
     var planetPos: [SCNVector3] = []
     
@@ -41,8 +34,6 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         
         setupView()
         setupScene()
-//        createSun()
-//        createPlanet()
         createPlanets()
         setupCamera()
         playSound()
@@ -71,7 +62,7 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
     
     func createPlanets()
     {
-        for (index,planet) in planetsData.enumerated()
+        for (_,planet) in planetsData.enumerated()
         {
             let ballGeometry = SCNSphere(radius: CGFloat(planet.radius))
             ballGeometry.segmentCount = 50
@@ -95,11 +86,16 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
                 let ballMaterial = SCNMaterial()
                 ballMaterial.diffuse.contents = UIImage(named:"art.scnassets/plutomap.jpg")
                 ballGeometry.materials = [ballMaterial]
+                ball.light = SCNLight()
+                ball.light?.type = SCNLight.LightType.omni
+                ball.light?.color = UIColor.white
                 ball.runAction(SCNAction.repeatForever(SCNAction.rotate(by: CGFloat(2 * Double.pi), around: SCNVector3(0.2,1,0), duration: 20)))
             }
-            ball.position = SCNVector3Make(Float(30 * index) , 0 , 0 )
+            ball.position = planet.position
             planets.append(ball)
             scnScene.rootNode.addChildNode(ball)
+            
+            self.planetPos.append(ball.position)
         }
     }
     
@@ -125,7 +121,6 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         cameraNode.eulerAngles = SCNVector3Make(-45,45,0)
         cameraNode.camera?.zFar = 10000
         
-//        let contraint = SCNLookAtConstraint(target: sun)
         if planets.count > 0
         {
                let contraint = SCNLookAtConstraint(target: planets[0])
@@ -138,34 +133,6 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
 //      Для того чтобы следил за солнцем
 //        sun.addChildNode(cameraNode )
     }
-    
-//    func createSun()
-//    {
-//        let ballGeometry = SCNSphere(radius: 27)
-//        ballGeometry.segmentCount = 100
-//        sun = SCNNode(geometry: ballGeometry)
-//        let ballMaterial = SCNMaterial()
-//        ballMaterial.diffuse.contents = UIImage(named:"art.scnassets/sun.jpg")
-//        ballMaterial.emission.contents = UIImage(named:"art.scnassets/sun.jpg")
-//        ballMaterial.emission.intensity = 1
-//        ballGeometry.materials = [ballMaterial]
-//
-//        sun.runAction(SCNAction.repeatForever(SCNAction.rotate(by: CGFloat(2 * Double.pi), around: SCNVector3(0.2,1,0), duration: 20)))
-//        scnScene.rootNode.addChildNode(sun)
-//    }
-//
-    
-//    func createPlanet()
-//    {
-//        planet = SCNNode()
-//        let ballGeometry = SCNSphere(radius: 14.0)
-//        planet = SCNNode(geometry: ballGeometry)
-//        let ballMaterial = SCNMaterial()
-//        ballMaterial.diffuse.contents = UIColor.gray
-//        ballGeometry.materials = [ballMaterial]
-//        planet.position = SCNVector3Make(60, 0 , 0 )
-//        scnScene.rootNode.addChildNode(planet)
-//    }
     
     func createLine()
     {
@@ -220,74 +187,20 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
         light.light?.type = .ambient
         light.light?.intensity = 30
         scnScene.rootNode.addChildNode(light)
-        
-//        sun.light = SCNLight()
-//        sun.light?.type = SCNLight.LightType.omni
-//        sun.light?.color = UIColor.white
     }
-    
-//    func planetMove()
-//    {
-//
-//        print("PositionX:",planet.position.x)
-//        print("PositionY:",planet.position.y)
-//        print("PositionZ:",planet.position.z)
-//        let vectorToSun = SCNVector3(sun.position.x - planet.position.x , sun.position.y - planet.position.y, sun.position.z - planet.position.z)
-//        let distToSun = distance(first: sun, second: planet)
-//        let vectorToSunNormalized = SCNVector3(vectorToSun.x/distToSun, vectorToSun.y/distToSun, vectorToSun.z/distToSun)
-//        let a = 11 * sunMass / distToSun / distToSun
-//        let finalVector = SCNVector3(a*vectorToSunNormalized.x, a*vectorToSunNormalized.y, a*vectorToSunNormalized.z)
-//        planetVector = SCNVector3(planetVector.x+finalVector.x, planetVector.y+finalVector.y, planetVector.z+finalVector.z)
-//        print(planetVector)
-//
-//
-//        if planetPos == nil
-//        {
-//            planetPos = planet.position
-//        }
-//
-//        planetPos  = planet.position
-//
-//        planet.runAction(SCNAction.moveBy(x: CGFloat(planetVector.x), y: CGFloat(planetVector.y), z: CGFloat(planetVector.z), duration: 0.1))
-//    }
-//
-    
-//    func sunMove()
-//    {
-//        print("PositionX:",planet.position.x)
-//        print("PositionY:",planet.position.y)
-//        print("PositionZ:",planet.position.z)
-//        let vectorToSun = SCNVector3(-(sun.position.x - planet.position.x) , -(sun.position.y - planet.position.y), -(sun.position.z - planet.position.z))
-//        let distToSun = distance(first: sun, second: planet)
-//        let vectorToSunNormalized = SCNVector3(vectorToSun.x/distToSun, vectorToSun.y/distToSun, vectorToSun.z/distToSun)
-//        let a = 11 * planetMass / distToSun / distToSun
-//        let finalVector = SCNVector3(a*vectorToSunNormalized.x, a*vectorToSunNormalized.y, a*vectorToSunNormalized.z)
-//        planetVector = SCNVector3(planetVector.x+finalVector.x, planetVector.y+finalVector.y, planetVector.z+finalVector.z)
-//        print(planetVector)
-//
-//
-//        if planetPos == nil
-//        {
-//            planetPos = planet.position
-//        }
-//
-//        planetPos  = planet.position
-//
-//        planet.runAction(SCNAction.moveBy(x: CGFloat(planetVector.x), y: CGFloat(planetVector.y), z: CGFloat(planetVector.z), duration: 0.1))
-//    }
-    
-    
    
     
     func planetsMove()
     {
         for i in 0...planetsData.count - 1
         {
+           
             for j in 0...planetsData.count - 1
             {
+               
                if i != j
                {
-                    let vectorToOtherPlanet = SCNVector3(-(planets[j].position.x - planets[i].position.x) , -(planets[j].position.y - planets[i].position.y), -(planets[j].position.z - planets[i].position.z))
+                    let vectorToOtherPlanet = SCNVector3((planets[j].position.x - planets[i].position.x) , (planets[j].position.y - planets[i].position.y), (planets[j].position.z - planets[i].position.z))
                     let distToOtherPlanet = distance(first: planets[i], second: planets[j])
                 let vectorToOtherPlanetNormalized = SCNVector3(vectorToOtherPlanet.x/distToOtherPlanet, vectorToOtherPlanet.y/distToOtherPlanet, vectorToOtherPlanet.z/distToOtherPlanet)
                 let a = 9.8 * Float(planetsData[j].mass) / distToOtherPlanet / distToOtherPlanet
@@ -296,72 +209,33 @@ class GameViewController: UIViewController,SCNSceneRendererDelegate, AVAudioPlay
                 }
                 
             }
-            if planetPos.count < planets.count
-            {
-                planetPos.append(planets[i].position)
-            }
-            else
-            {
-                planetPos[i] = planets[i].position
-            }
              planets[i].runAction(SCNAction.moveBy(x: CGFloat(planetsData[i].vector.x), y: CGFloat(planetsData[i].vector.y), z: CGFloat(planetsData[i].vector.z), duration: 0.1))
+           
         }
-        //        let vectorToSun = SCNVector3(sun.position.x - planet.position.x , sun.position.y - planet.position.y, sun.position.z - planet.position.z)
-        //        let distToSun = distance(first: sun, second: planet)
-        //        let vectorToSunNormalized = SCNVector3(vectorToSun.x/distToSun, vectorToSun.y/distToSun, vectorToSun.z/distToSun)
-        //        let a = 11 * sunMass / distToSun / distToSun
-        //        let finalVector = SCNVector3(a*vectorToSunNormalized.x, a*vectorToSunNormalized.y, a*vectorToSunNormalized.z)
-        //        planetVector = SCNVector3(planetVector.x+finalVector.x, planetVector.y+finalVector.y, planetVector.z+finalVector.z)
-        //        print(planetVector)
-        //
-        //
-        //        if planetPos == nil
-        //        {
-        //            planetPos = planet.position
-        //        }
-        //
-        //        planetPos  = planet.position
-        //
-        //        planet.runAction(SCNAction.moveBy(x: CGFloat(planetVector.x), y: CGFloat(planetVector.y), z: CGFloat(planetVector.z), duration: 0.1))
     }
     
     func createLines()
     {
         
-        for (index,planet) in planetsData.enumerated()
+        for (index,_) in planetsData.enumerated()
         {
+            debugPrint(planets[index].position)
+            debugPrint(planetPos[index])
             let line = SCNNode(geometry: SCNGeometry.lineFrom(vector: planetPos[index], toVector: planets[index].position))
             lines.append(line)
             scnScene.rootNode.addChildNode(line)
-            if lines.count > 500
+            if lines.count > 500*planets.count
             {
                 lines.first?.removeFromParentNode()
                 lines.remove(at: 0)
             }
+            planetPos[index] = planets[index].position
         }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        
-//        planetMove()
-//        sunMove()
         planetsMove()
         createLines()
-        
-//        let line = SCNNode(geometry: SCNGeometry.lineFrom(vector: planetPos!, toVector: planet.position))
-//        lines.append(line)
-//        scnScene.rootNode.addChildNode(line)
-//
-//
-//        if lines.count > 500
-//        {
-//            lines.first?.removeFromParentNode()
-//            lines.remove(at: 0)
-//        }
-    
-        
-
-        
     }
     
     

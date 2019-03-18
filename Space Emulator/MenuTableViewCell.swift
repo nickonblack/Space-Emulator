@@ -21,6 +21,9 @@ class MenuTableViewCell: UITableViewCell, UIPickerViewDelegate, UIPickerViewData
     @IBOutlet weak var zVectorTextField: UITextField!
     
     @IBOutlet weak var planetTypePickerView: UIPickerView!
+    @IBOutlet weak var xStartTextField: UITextField!
+    @IBOutlet weak var yStartTextField: UITextField!
+    @IBOutlet weak var zStartTextField: UITextField!
     
     override func awakeFromNib() {
         super.awakeFromNib()
